@@ -1,5 +1,5 @@
-// Generated on <%= (new Date).toISOString().split('T')[0] %> using
-// <%= pkg.name %> <%= pkg.version %>
+// Generated on <%%= (new Date).toISOString().split('T')[0] %> using
+// <%%= pkg.name %> <%%= pkg.version %>
 'use strict';
 
 // # Globbing
@@ -8,7 +8,7 @@
 // If you want to recursively match all subfolders, use:
 // 'test/spec/**/*.js'
 
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -18,8 +18,8 @@ module.exports = function (grunt) {
 
   // Configurable paths
   var config = {
-    app: 'app',
-    dist: 'dist'
+    app: '<%%= devFolder%>',
+    dist: '<%%= buildFolder%>'
   };
 
   // Define the configuration for all the tasks
@@ -33,15 +33,7 @@ module.exports = function (grunt) {
       bower: {
         files: ['bower.json'],
         tasks: ['wiredep']
-      },<% if (coffee) { %>
-      coffee: {
-        files: ['<%%= config.app %>/scripts/{,*/}*.{coffee,litcoffee,coffee.md}'],
-        tasks: ['coffee:dist']
       },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.{coffee,litcoffee,coffee.md}'],
-        tasks: ['coffee:test', 'test:watch']
-      },<% } else { %>
       js: {
         files: ['<%%= config.app %>/scripts/{,*/}*.js'],
         tasks: ['jshint'],
@@ -52,17 +44,22 @@ module.exports = function (grunt) {
       jstest: {
         files: ['test/spec/{,*/}*.js'],
         tasks: ['test:watch']
-      },<% } %>
+      },
+
       gruntfile: {
         files: ['Gruntfile.js']
-      },<% if (includeSass) { %>
-      sass: {
-        files: ['<%%= config.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['sass:server', 'autoprefixer']
-      },<% } %>
-      styles: {
-        files: ['<%%= config.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+      },
+      <%
+      if (includeLess) { %>
+          less: {
+            files: ['<%%= config.app %>/styles/{,*/}*.less'],
+            tasks: ['less:server', 'autoprefixer']
+        },
+        <%
+      } %>
+        styles: {
+          files: ['<%%= config.app %>/styles/{,*/}*.css'],
+          tasks: ['newer:copy:styles', 'autoprefixer']
       },
       livereload: {
         options: {
@@ -70,8 +67,7 @@ module.exports = function (grunt) {
         },
         files: [
           '<%%= config.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',<% if (coffee) { %>
-          '.tmp/scripts/{,*/}*.js',<% } %>
+          '.tmp/styles/{,*/}*.css',
           '<%%= config.app %>/images/{,*/}*'
         ]
       }
@@ -146,76 +142,63 @@ module.exports = function (grunt) {
         '!<%%= config.app %>/scripts/vendor/*',
         'test/spec/{,*/}*.js'
       ]
-    },<% if (testFramework === 'mocha') { %>
+    },
+    <%
+    if (testFramework === 'mocha') { %>
 
-    // Mocha testing framework configuration options
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: ['http://<%%= connect.test.options.hostname %>:<%%= connect.test.options.port %>/index.html']
+      // Mocha testing framework configuration options
+      mocha: {
+        all: {
+          options: {
+            run: true,
+            urls: ['http://<%%= connect.test.options.hostname %>:<%%= connect.test.options.port %>/index.html']
+          }
         }
-      }
-    },<% } else if (testFramework === 'jasmine') { %>
+      },
+      <%
+    } else if (testFramework === 'jasmine') { %>
 
-    // Jasmine testing framework configuration options
-    jasmine: {
-      all: {
-        options: {
-          specs: 'test/spec/{,*/}*.js'
+      // Jasmine testing framework configuration options
+      jasmine: {
+        all: {
+          options: {
+            specs: 'test/spec/{,*/}*.js'
+          }
         }
-      }
-    },<% } %><% if (coffee) { %>
-
-    // Compiles CoffeeScript to JavaScript
-    coffee: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%%= config.app %>/scripts',
-          src: '{,*/}*.{coffee,litcoffee,coffee.md}',
-          dest: '.tmp/scripts',
-          ext: '.js'
-        }]
       },
-      test: {
-        files: [{
-          expand: true,
-          cwd: 'test/spec',
-          src: '{,*/}*.{coffee,litcoffee,coffee.md}',
-          dest: '.tmp/spec',
-          ext: '.js'
-        }]
-      }
-    },<% } %><% if (includeSass) { %>
+      <%
+    } %> <%
+    if (includeLess) { %>
 
-    // Compiles Sass to CSS and generates necessary files if requested
-    sass: {
-      options: {<% if (includeLibSass) { %>
-        sourceMap: true,
-        includePaths: ['bower_components']
-        <% } else { %>
-        loadPath: 'bower_components'
-      <% } %>},
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%%= config.app %>/styles',
-          src: ['*.{scss,sass}'],
-          dest: '.tmp/styles',
-          ext: '.css'
-        }]
+      // Compiles Less to CSS and generates necessary files if requested
+      less: {
+        options: {
+          compress: true,
+          strictImports: true,
+          syncImports: true,
+          report: 'min'
+        },
+        server: {
+          files: [{
+            expand: true,
+            cwd: '<%%= config.app %>/styles',
+            src: ['*.less'],
+            dest: '.tmp/styles',
+            ext: '.css'
+          }]
+        },
+        dist: {
+          files: [{
+            expand: true,
+            cwd: '<%%= config.app %>/styles',
+            src: ['*.less'],
+            dest: '.tmp/styles',
+            ext: '.css'
+          }]
+        }
       },
-      server: {
-        files: [{
-          expand: true,
-          cwd: '<%%= config.app %>/styles',
-          src: ['*.{scss,sass}'],
-          dest: '.tmp/styles',
-          ext: '.css'
-        }]
-      }
-    },<% } %>
+      <%
+    } %>
 
     // Add vendor prefixed styles
     autoprefixer: {
@@ -235,15 +218,22 @@ module.exports = function (grunt) {
     // Automatically inject Bower components into the HTML file
     wiredep: {
       app: {
-        ignorePath: /^<%= config.app %>\/|\.\.\//,
-        src: ['<%%= config.app %>/index.html']<% if (includeBootstrap) { %>,<% if (includeSass) { %>
-        exclude: ['bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js']<% } else { %>
-        exclude: ['bower_components/bootstrap/dist/js/bootstrap.js']<% } } %>
-      }<% if (includeSass) { %>,
-      sass: {
-        src: ['<%%= config.app %>/styles/{,*/}*.{scss,sass}'],
-        ignorePath: /(\.\.\/){1,2}bower_components\//
-      }<% } %>
+        ignorePath: /^<%%= config.app %>\/|\.\.\//,
+        src: ['<%%= config.app %>/<%%= devFolder %>'] <%
+        if (includeBootstrap) { %> , <%
+          if (includeLess) { %>
+              exclude: ['bower_components/bootstrap-less/assets/javascripts/bootstrap.js'] <%
+          } else { %>
+              exclude: ['bower_components/bootstrap/dist/js/bootstrap.js'] <%
+          }
+        } %>
+      } <%
+      if (includeLess) { %> ,
+        less: {
+          src: ['<%%= config.app %>/styles/{,*/}*.less'],
+          ignorePath: /(\.\.\/){1,2}bower_components\//
+        } <%
+      } %>
     },
 
     // Renames files for browser caching purposes
@@ -268,7 +258,7 @@ module.exports = function (grunt) {
       options: {
         dest: '<%%= config.dist %>'
       },
-      html: '<%%= config.app %>/index.html'
+      html: '<%%= config.app %>/<%%= devFolder %>'
     },
 
     // Performs rewrites based on rev and the useminPrepare configuration
@@ -359,34 +349,37 @@ module.exports = function (grunt) {
     copy: {
       dist: {
         files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%%= config.app %>',
-          dest: '<%%= config.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            'images/{,*/}*.webp',
-            '{,*/}*.html',
-            'styles/fonts/{,*/}*.*'
-          ]
-        }, {
-          src: 'node_modules/apache-server-configs/dist/.htaccess',
-          dest: '<%%= config.dist %>/.htaccess'
-        }<% if (includeBootstrap) { %>, {
-          expand: true,
-          dot: true,
-          cwd: '<% if (includeSass) {
+            expand: true,
+            dot: true,
+            cwd: '<%%= config.app %>',
+            dest: '<%%= config.dist %>',
+            src: [
+              '*.{ico,png,txt}',
+              'images/{,*/}*.webp',
+              '{,*/}*.html',
+              'styles/fonts/{,*/}*.*'
+            ]
+          }, {
+            src: 'node_modules/apache-server-configs/dist/.htaccess',
+            dest: '<%%= config.dist %>/.htaccess'
+          } <%
+          if (includeBootstrap) { %> , {
+              expand: true,
+              dot: true,
+              cwd: '<% if (includeLess) {
               %>.<%
             } else {
               %>bower_components/bootstrap/dist<%
             } %>',
-          src: '<% if (includeSass) {
-              %>bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*<%
+              src: '<% if (includeLess) {
+              %>bower_components/bootstrap-less/assets/fonts/bootstrap/*<%
             } else {
               %>fonts/*<%
             } %>',
-          dest: '<%%= config.dist %>'
-        }<% } %>]
+              dest: '<%%= config.dist %>'
+            } <%
+          } %>
+        ]
       },
       styles: {
         expand: true,
@@ -395,39 +388,44 @@ module.exports = function (grunt) {
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
       }
-    },<% if (includeModernizr) { %>
+    },
+    <%
+    if (includeModernizr) { %>
 
-    // Generates a custom Modernizr build that includes only the tests you
-    // reference in your app
-    modernizr: {
-      dist: {
-        devFile: 'bower_components/modernizr/modernizr.js',
-        outputFile: '<%%= config.dist %>/scripts/vendor/modernizr.js',
-        files: {
-          src: [
-            '<%%= config.dist %>/scripts/{,*/}*.js',
-            '<%%= config.dist %>/styles/{,*/}*.css',
-            '!<%%= config.dist %>/scripts/vendor/*'
-          ]
-        },
-        uglify: true
-      }
-    },<% } %>
+      // Generates a custom Modernizr build that includes only the tests you
+      // reference in your app
+      modernizr: {
+        dist: {
+          devFile: 'bower_components/modernizr/modernizr.js',
+          outputFile: '<%%= config.dist %>/scripts/vendor/modernizr.js',
+          files: {
+            src: [
+              '<%%= config.dist %>/scripts/{,*/}*.js',
+              '<%%= config.dist %>/styles/{,*/}*.css',
+              '!<%%= config.dist %>/scripts/vendor/*'
+            ]
+          },
+          uglify: true
+        }
+      },
+      <%
+    } %>
 
     // Run some tasks in parallel to speed up build process
     concurrent: {
-      server: [<% if (includeSass) { %>
-        'sass:server',<% } if (coffee) {  %>
-        'coffee:dist',<% } %>
+      server: [ <%
+        if (includeLess) { %>
+            'less:server', <%
+        } %>
         'copy:styles'
       ],
-      test: [<% if (coffee) { %>
-        'coffee',<% } %>
+      test: [
         'copy:styles'
       ],
-      dist: [<% if (coffee) { %>
-        'coffee',<% } if (includeSass) { %>
-        'sass',<% } %>
+      dist: [ <%
+        if (includeLess) { %>
+            'less', <%
+        } %>
         'copy:styles',
         'imagemin',
         'svgmin'
@@ -436,7 +434,7 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerTask('serve', 'start the server and preview your app, --allow-remote for remote access', function (target) {
+  grunt.registerTask('serve', 'start the server and preview your app, --allow-remote for remote access', function(target) {
     if (grunt.option('allow-remote')) {
       grunt.config.set('connect.options.hostname', '0.0.0.0');
     }
@@ -454,12 +452,12 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('server', function (target) {
+  grunt.registerTask('server', function(target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run([target ? ('serve:' + target) : 'serve']);
   });
 
-  grunt.registerTask('test', function (target) {
+  grunt.registerTask('test', function(target) {
     if (target !== 'watch') {
       grunt.task.run([
         'clean:server',
@@ -469,9 +467,12 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-      'connect:test',<% if (testFramework === 'mocha') { %>
-      'mocha'<% } else if (testFramework === 'jasmine') { %>
-      'jasmine'<% } %>
+      'connect:test', <%
+      if (testFramework === 'mocha') { %>
+          'mocha' <%
+      } else if (testFramework === 'jasmine') { %>
+          'jasmine' <%
+      } %>
     ]);
   });
 
@@ -484,8 +485,10 @@ module.exports = function (grunt) {
     'concat',
     'cssmin',
     'uglify',
-    'copy:dist',<% if (includeModernizr) { %>
-    'modernizr',<% } %>
+    'copy:dist', <%
+    if (includeModernizr) { %>
+        'modernizr', <%
+    } %>
     'rev',
     'usemin',
     'htmlmin'

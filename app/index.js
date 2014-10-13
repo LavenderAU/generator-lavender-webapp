@@ -5,7 +5,7 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 
 module.exports = yeoman.generators.Base.extend({
-  constructor: function () {
+  constructor: function() {
     yeoman.generators.Base.apply(this, arguments);
 
     // setup the test-framework property, Gruntfile template will need this
@@ -26,7 +26,7 @@ module.exports = yeoman.generators.Base.extend({
     this.pkg = require('../package.json');
   },
 
-  askFor: function () {
+  askFor: function() {
     var done = this.async();
 
     // welcome message
@@ -39,109 +39,180 @@ module.exports = yeoman.generators.Base.extend({
     }
 
     var prompts = [{
+      name: 'projectName',
+      message: 'What is the job code for this project?',
+      default: 'ABC123'
+    }, {
+      name: 'devFolder',
+      message: 'Ok so, where do you want to put the dev source files?',
+      default: 'src'
+    }, {
+      name: 'buildFolder',
+      message: 'And the compiled files?',
+      default: 'dist'
+    }, {
+      name: 'devFile',
+      message: 'Cheerios. Now enter the name of the html dev file?',
+      default: 'index.html'
+    }, {
       type: 'checkbox',
       name: 'features',
       message: 'What more would you like?',
       choices: [{
+        name: 'jQuery v2 (default jQuery 1.11.1 will be installed)',
+        value: 'jquery2'
+      }, {
         name: 'Bootstrap',
         value: 'includeBootstrap',
-        checked: true
-      },{
-        name: 'Sass',
-        value: 'includeSass',
         checked: false
-      },{
+      }, {
+        name: 'Less',
+        value: 'includeLess',
+        checked: false
+      }, {
         name: 'Modernizr',
         value: 'includeModernizr',
         checked: false
+      }, {
+        name: 'Core JS',
+        value: 'includeCoreJS'
+      }, {
+        name: "Greensock TweenMax",
+        value: "includeGreensock"
+      }, {
+        name: "HTML5Shiv",
+        value: "includeHtml5shiv"
+      }, {
+        name: "Raphael JS",
+        value: "includeRaphael"
+      }, {
+        name: "accounting.js",
+        value: "includeAccounting"
+      }, {
+        name: "Jquery UI",
+        value: "includeJqueryUI"
       }]
-    }, {
-      when: function (answers) {
-        return answers && answers.features &&
-          answers.features.indexOf('includeSass') !== -1;
-      },
-      type: 'confirm',
-      name: 'libsass',
-      value: 'includeLibSass',
-      message: 'Would you like to use libsass? Read up more at \n' +
-        chalk.green('https://github.com/andrew/node-sass#node-sass'),
-      default: false
     }];
 
-    this.prompt(prompts, function (answers) {
+    this.prompt(prompts, function(answers) {
       var features = answers.features;
 
       function hasFeature(feat) {
         return features && features.indexOf(feat) !== -1;
       }
 
-      this.includeSass = hasFeature('includeSass');
-      this.includeBootstrap = hasFeature('includeBootstrap');
-      this.includeModernizr = hasFeature('includeModernizr');
+      this.projectName = answers.projectName;
+      this.devFolder = answers.devFolder;
+      this.devFile = answers.devFile;
 
-      this.includeLibSass = answers.libsass;
-      this.includeRubySass = !answers.libsass;
+      this.jquery2 = hasFeature('jquery2');
+      this.includeBootstrap = hasFeature('includeBootstrap');
+      this.includeLess = hasFeature('includeLess');
+      this.includeModernizr = hasFeature('includeModernizr');
+      this.includeCoreJS = hasFeature('includeCoreJS');
+      this.includeGreensock = hasFeature('includeGreensock');
+      this.includeHtml5shiv = hasFeature('includeHtml5shiv');
+      this.includeRaphael = hasFeature('includeRaphael');
+      this.includeAccounting = hasFeature('includeAccounting');
+      this.includeJqueryUI = hasFeature('includeJqueryUI');
+
+      this.includeLibLess = answers.libLess;
+      //this.includeRubyLess = !answers.libLess;
 
       done();
     }.bind(this));
   },
 
-  gruntfile: function () {
+  gruntfile: function() {
     this.template('Gruntfile.js');
   },
 
-  packageJSON: function () {
+  packageJSON: function() {
     this.template('_package.json', 'package.json');
   },
 
-  git: function () {
+  git: function() {
     this.template('gitignore', '.gitignore');
     this.copy('gitattributes', '.gitattributes');
   },
 
-  bower: function () {
+  bower: function() {
     var bower = {
       name: this._.slugify(this.appname),
       private: true,
       dependencies: {}
     };
 
-    if (this.includeBootstrap) {
-      var bs = 'bootstrap' + (this.includeSass ? '-sass-official' : '');
-      bower.dependencies[bs] = "~3.2.0";
+    if (this.jquery2) {
+      bower.dependencies.jquery = "~2.1.1";
     } else {
       bower.dependencies.jquery = "~1.11.1";
+    }
+
+    if (this.includeBootstrap) {
+      var bs = 'bootstrap' + (this.includeLess ? '-less' : '');
+      bower.dependencies[bs] = "~3.2.0";
+      bower.dependencies[bs].dependencies = [{
+        "respond": "1.4.2"
+      }];
     }
 
     if (this.includeModernizr) {
       bower.dependencies.modernizr = "~2.8.2";
     }
 
+    if (this.includeCoreJS) {
+      bower.dependencies['core-js'] = "";
+    }
+
+    if (this.includeGreensock) {
+      bower.dependencies.greensock = "~1.13.2";
+    }
+
+    if (this.includeHtml5shiv) {
+      bower.dependencies.html5shiv = "~3.7.2";
+    }
+
+    if (this.includeRaphael) {
+      bower.dependencies.raphael = "~2.1.2";
+    }
+
+    if (this.includeAccounting) {
+      bower.dependencies.accountingjs = "~0.3.2";
+    }
+
+    if (this.includeJqueryUI) {
+      bower.dependencies["jquery-ui"] = "~1.11.1";
+      bower.dependencies["jquery-ui"].dependencies = [{
+        "jqueryui-touch-punch": ""
+      }];
+    }
+
     this.copy('bowerrc', '.bowerrc');
     this.write('bower.json', JSON.stringify(bower, null, 2));
   },
 
-  jshint: function () {
+  jshint: function() {
     this.copy('jshintrc', '.jshintrc');
   },
 
-  editorConfig: function () {
+  editorConfig: function() {
     this.copy('editorconfig', '.editorconfig');
   },
 
-  mainStylesheet: function () {
-    var css = 'main.' + (this.includeSass ? 's' : '') + 'css';
-    this.template(css, 'app/styles/' + css);
+  mainStylesheet: function() {
+    var css = 'main.' + (this.includeLess ? 'less' : 'css');
+    this.template(css, this.devFolder + '/styles/' + css);
   },
 
-  writeIndex: function () {
+  writeIndex: function() {
     this.indexFile = this.engine(
-      this.readFileAsString(join(this.sourceRoot(), 'index.html')),
+      this.readFileAsString(join(this.sourceRoot(), this.devFile)),
       this
     );
 
     // wire Bootstrap plugins
-    if (this.includeBootstrap && !this.includeSass) {
+    if (this.includeBootstrap && !this.includeLess) {
       var bs = 'bower_components/bootstrap/js/';
 
       this.indexFile = this.appendFiles({
@@ -171,35 +242,31 @@ module.exports = yeoman.generators.Base.extend({
       fileType: 'js',
       optimizedPath: 'scripts/main.js',
       sourceFileList: ['scripts/main.js'],
-      searchPath: ['app', '.tmp']
+      searchPath: [this.devFolder, '.tmp']
     });
   },
 
-  app: function () {
-    this.directory('app');
-    this.mkdir('app/scripts');
-    this.mkdir('app/styles');
-    this.mkdir('app/images');
-    this.write('app/index.html', this.indexFile);
+  app: function() {
+    this.directory(this.devFolder);
+    this.mkdir(this.devFolder + '/scripts');
+    this.mkdir(this.devFolder + '/styles');
+    this.mkdir(this.devFolder + '/images');
+    this.mkdir(this.devFolder + '/images/sprite-src');
+    this.write(this.devFolder + '/' + this.devFile, this.indexFile);
 
-    if (this.coffee) {
-      this.write(
-        'app/scripts/main.coffee',
-        'console.log "\'Allo from CoffeeScript!"'
-      );
-    }
-    else {
-      this.write('app/scripts/main.js', 'console.log(\'\\\'Allo \\\'Allo!\');');
+    if (this.includeCoreJS) {
+      this.copy('core.main.js', 'main.js');
+    } else {
+      this.write(this.devFolder + '/scripts/main.js', 'console.log(\'\\\'Allo \\\'Allo!\');');
     }
   },
 
-  install: function () {
-    this.on('end', function () {
+  install: function() {
+    this.on('end', function() {
       this.invoke(this.options['test-framework'], {
         options: {
           'skip-message': this.options['skip-install-message'],
-          'skip-install': this.options['skip-install'],
-          'coffee': this.options.coffee
+          'skip-install': this.options['skip-install']
         }
       });
 
