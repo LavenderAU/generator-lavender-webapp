@@ -1,4 +1,4 @@
-# Lavender Web app generator 
+# Lavender Web app generator [![Build Status](https://travis-ci.org/LavenderAU/generator-lavender-webapp.svg?branch=master)](http://travis-ci.org/LavenderAU/generator-lavender-webapp)
 
 ## Features
 
@@ -18,8 +18,8 @@ For more information on what `generator-webapp` can do for you, take a look at t
 
 ## Getting Started
 
-- Install: `npm install -g generator-webapp`
-- Run: `yo webapp`
+- Install: `npm install -g git://github.com/LavenderAU/generator-lavender-webapp`
+- Run: `yo lavender-webapp`
 - Run `grunt` for building and `grunt serve` for preview[\*](#grunt-serve-note). `--allow-remote` option for remote access.
 
 
@@ -64,11 +64,9 @@ We have [recipes](docs/recipes) for integrating other popular technologies like 
   Defaults to `mocha`. Can be switched for another supported testing framework like `jasmine`.
 
 
-Fork of *generator-webapp* by
+**Fork of *generator-webapp* by**
 
 [Yeoman](http://yeoman.io) generator that scaffolds out a front-end web app.
-
-![](http://i.imgur.com/uKTT2Hj.png)
 
 
 ## License
