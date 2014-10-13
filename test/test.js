@@ -127,7 +127,7 @@ describe('Lavender webapp generator', function() {
           ]);
 
           assert.noFileContent([
-            ['package.json', /grunt-Less/]
+            ['package.json', /grunt-contrib-less/]
           ]);
 
           done();
@@ -141,7 +141,7 @@ describe('Lavender webapp generator', function() {
       }).on('end', function() {
 
         assert.fileContent([
-          ['package.json', /grunt-less/]
+          ['package.json', /grunt-contrib-less/]
         ]);
 
         assert.noFileContent([

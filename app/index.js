@@ -45,7 +45,7 @@ module.exports = yeoman.generators.Base.extend({
     }, {
       name: 'devFolder',
       message: 'Ok so, where do you want to put the dev source files?',
-      default: 'src'
+      default: 'app'
     }, {
       name: 'buildFolder',
       message: 'And the compiled files?',
