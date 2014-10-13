@@ -6,13 +6,13 @@ var helpers = require('yeoman-generator').test;
 var assert = require('yeoman-generator').assert;
 var _ = require('underscore');
 
-describe('Webapp generator', function () {
+describe('Lavender webapp generator', function() {
   // not testing the actual run of generators yet
-  it('the generator can be required without throwing', function () {
+  it('the generator can be required without throwing', function() {
     this.app = require('../app');
   });
 
-  describe('run test', function () {
+  describe('run test', function() {
 
     var expectedContent = [
       ['bower.json', /"name": "tmp"/],
@@ -39,15 +39,17 @@ describe('Webapp generator', function () {
 
     var runGen;
 
-    beforeEach(function () {
+    beforeEach(function() {
       runGen = helpers
         .run(path.join(__dirname, '../app'))
         .inDir(path.join(__dirname, '.tmp'))
-        .withGenerators([[helpers.createDummyGenerator(), 'mocha:app']]);
+        .withGenerators([
+          [helpers.createDummyGenerator(), 'mocha:app']
+        ]);
     });
 
-    it('creates expected files', function (done) {
-      runGen.withOptions(options).on('end', function () {
+    it('creates expected files', function(done) {
+      runGen.withOptions(options).on('end', function() {
 
         assert.file([].concat(
           expected,
@@ -55,13 +57,11 @@ describe('Webapp generator', function () {
           'app/scripts/main.js'
         ));
         assert.noFile([
-          'app/styles/main.scss',
-          'app/scripts/main.coffee'
+          'app/styles/main.less'
         ]);
 
         assert.fileContent(expectedContent);
         assert.noFileContent([
-          ['Gruntfile.js', /coffee/],
           ['Gruntfile.js', /modernizr/],
           ['app/index.html', /modernizr/],
           ['bower.json', /modernizr/],
@@ -69,116 +69,98 @@ describe('Webapp generator', function () {
           ['Gruntfile.js', /bootstrap/],
           ['app/index.html', /bootstrap/],
           ['bower.json', /bootstrap/],
-          ['Gruntfile.js', /sass/],
-          ['app/index.html', /Sass/],
+          ['Gruntfile.js', /less/],
+          ['app/index.html', /Less/],
           ['.gitignore', /\.sass-cache/],
-          ['package.json', /grunt-contrib-sass/],
-          ['package.json', /grunt-sass/],
-          ['Gruntfile.js', /bootstrap-sass-official/],
-          ['app/index.html', /Sass is a mature/],
-          ['bower.json', /bootstrap-sass-official/]
+          ['package.json', /grunt-contrib-less/],
+          ['Gruntfile.js', /bootstrap-less/],
+          ['bower.json', /bootstrap-less/]
         ]);
         done();
       });
     });
 
-    it('creates expected CoffeeScript files', function (done) {
-      runGen.withOptions(
-        _.extend(options, {coffee: true})
-      ).on('end', function () {
-
-        assert.file([].concat(
-          expected,
-          'app/scripts/main.coffee'
-        ));
-        assert.noFile('app/scripts/main.js');
-
-        assert.fileContent([].concat(
-          expectedContent,
-          [['Gruntfile.js', /coffee/]]
-        ));
-
-        done();
-      });
-    });
-
-    it('creates expected modernizr components', function (done) {
-      runGen.withOptions(options).withPrompt({features: ['includeModernizr']})
-      .on('end', function () {
-
-        assert.fileContent([
-          ['Gruntfile.js', /modernizr/],
-          ['app/index.html', /modernizr/],
-          ['bower.json', /modernizr/],
-          ['package.json', /modernizr/],
-        ]);
-
-        done();
-      });
-    });
-
-    it('creates expected bootstrap components', function (done) {
-      runGen.withOptions(options).withPrompt({features: ['includeBootstrap']})
-      .on('end', function () {
-
-        assert.fileContent([
-          ['Gruntfile.js', /bootstrap/],
-          ['app/index.html', /bootstrap/],
-          ['bower.json', /bootstrap/]
-        ]);
-
-        done();
-      });
-    });
-
-    it('creates expected ruby SASS components', function (done) {
-      runGen.withOptions(options).withPrompt({features: ['includeSass']})
-      .on('end', function () {
-
-        assert.fileContent([
-          ['Gruntfile.js', /sass/],
-          ['app/index.html', /Sass/],
-          ['.gitignore', /\.sass-cache/],
-          ['package.json', /grunt-contrib-sass/]
-        ]);
-
-        assert.noFileContent([
-          ['package.json', /grunt-sass/],
-          ['app/index.html', /Sass is a mature/]
-        ]);
-
-        done();
-      });
-    });
-
-    it('creates expected node SASS files', function (done) {
+    it('creates expected modernizr components', function(done) {
       runGen.withOptions(options).withPrompt({
-        features: ['includeSass'],
+        features: ['includeModernizr']
+      })
+        .on('end', function() {
+
+          assert.fileContent([
+            ['Gruntfile.js', /modernizr/],
+            ['app/index.html', /modernizr/],
+            ['bower.json', /modernizr/],
+            ['package.json', /modernizr/],
+          ]);
+
+          done();
+        });
+    });
+
+    it('creates expected bootstrap components', function(done) {
+      runGen.withOptions(options).withPrompt({
+        features: ['includeBootstrap']
+      })
+        .on('end', function() {
+
+          assert.fileContent([
+            ['Gruntfile.js', /bootstrap/],
+            ['app/index.html', /bootstrap/],
+            ['bower.json', /bootstrap/]
+          ]);
+
+          done();
+        });
+    });
+
+    it('creates expected LESS components', function(done) {
+      runGen.withOptions(options).withPrompt({
+        features: ['includeLess']
+      })
+        .on('end', function() {
+
+          assert.fileContent([
+            ['Gruntfile.js', /less/],
+            ['app/index.html', /Less/],
+            ['.gitignore', /\.less-cache/],
+            ['package.json', /grunt-contrib-less/]
+          ]);
+
+          assert.noFileContent([
+            ['package.json', /grunt-Less/]
+          ]);
+
+          done();
+        });
+    });
+
+    it('creates expected node LESS files', function(done) {
+      runGen.withOptions(options).withPrompt({
+        features: ['includeLess'],
         libsass: true
-      }).on('end', function () {
+      }).on('end', function() {
 
         assert.fileContent([
-          ['package.json', /grunt-sass/]
+          ['package.json', /grunt-less/]
         ]);
 
         assert.noFileContent([
-          ['package.json', /grunt-contrib-sass/],
-          ['Gruntfile.js', /bootstrap-sass-official/]
+          ['package.json', /grunt-contrib-less/],
+          ['Gruntfile.js', /bootstrap-less/]
         ]);
 
         done();
       });
     });
 
-    it('creates expected SASS and Bootstrap components', function (done) {
+    it('creates expected LESS and Bootstrap components', function(done) {
       runGen.withOptions(options).withPrompt({
-        features: ['includeSass', 'includeBootstrap']
-      }).on('end', function () {
+        features: ['includeLess', 'includeBootstrap']
+      }).on('end', function() {
 
         assert.fileContent([
-          ['Gruntfile.js', /bootstrap-sass-official/],
-          ['app/index.html', /Sass is a mature/],
-          ['bower.json', /bootstrap-sass-official/]
+          ['Gruntfile.js', /bootstrap-less/],
+          ['bower.json', /bootstrap-less/]
         ]);
 
         done();
