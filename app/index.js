@@ -188,7 +188,8 @@ module.exports = yeoman.generators.Base.extend({
       }];
     }
 
-    this.copy('bowerrc', '.bowerrc');
+    //this.copy('bowerrc', '.bowerrc');
+    this.template('bowerrc', '.bowerrc');
     this.write('bower.json', JSON.stringify(bower, null, 2));
   },
 
@@ -212,8 +213,8 @@ module.exports = yeoman.generators.Base.extend({
     );
 
     // wire Bootstrap plugins
-    if (this.includeBootstrap && !this.includeLess) {
-      var bs = 'bower_components/bootstrap/js/';
+    if (this.includeBootstrap) {
+      var bs = 'bower_components/bootstrap' + (this.includeLess ? '-less' : '') + '/js/';
 
       this.indexFile = this.appendFiles({
         html: this.indexFile,
@@ -255,7 +256,7 @@ module.exports = yeoman.generators.Base.extend({
     this.write(this.devFolder + '/' + this.devFile, this.indexFile);
 
     if (this.includeCoreJS) {
-      this.copy('core.main.js', 'main.js');
+      this.copy('core.main.js', this.devFolder + '/scripts/main.js');
     } else {
       this.write(this.devFolder + '/scripts/main.js', 'console.log(\'\\\'Allo \\\'Allo!\');');
     }

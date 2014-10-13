@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
   // Configurable paths
   var config = {
-    app: '<%%= devFolder%>',
+    app: '<%= devFolder%>',
     dist: '<%%= buildFolder%>'
   };
 
@@ -54,6 +54,10 @@ module.exports = function(grunt) {
           less: {
             files: ['<%%= config.app %>/styles/{,*/}*.less'],
             tasks: ['less:server', 'autoprefixer']
+        },
+        sprite: {
+          files: ['<%%= config.app %>/images/sprite-src/*.*'],
+          task: ['sprite', 'less']
         },
         <%
       } %>
@@ -176,6 +180,10 @@ module.exports = function(grunt) {
           compress: true,
           strictImports: true,
           syncImports: true,
+          sourceMap: true,
+          sourceMapFilename: '<%%= config.app %>/styles/main.css.map',
+          sourceMapURL: '/styles/main.css.map',
+          sourceMapRootpath: '/',
           report: 'min'
         },
         server: {
@@ -195,6 +203,15 @@ module.exports = function(grunt) {
             dest: '.tmp/styles',
             ext: '.css'
           }]
+        }
+      },
+      sprite: {
+        all: {
+          src: ['<%%= config.app %>/images/sprite-src/*.png'],
+          destImg: '<%%= config.app %>/images/spritesheet.png',
+          destCSS: '<%%= config.app %>/styles/spritesheet.less',
+          algorithm: 'binary-tree',
+          padding: 2
         }
       },
       <%
@@ -219,10 +236,10 @@ module.exports = function(grunt) {
     wiredep: {
       app: {
         ignorePath: /^<%%= config.app %>\/|\.\.\//,
-        src: ['<%%= config.app %>/<%%= devFolder %>'] <%
+        src: ['<%%= config.app %>/<%= devFile %>'] <%
         if (includeBootstrap) { %> , <%
           if (includeLess) { %>
-              exclude: ['bower_components/bootstrap-less/assets/javascripts/bootstrap.js'] <%
+              exclude: ['bower_components/bootstrap-less/js/bootstrap.js'] <%
           } else { %>
               exclude: ['bower_components/bootstrap/dist/js/bootstrap.js'] <%
           }
@@ -230,8 +247,7 @@ module.exports = function(grunt) {
       } <%
       if (includeLess) { %> ,
         less: {
-          src: ['<%%= config.app %>/styles/{,*/}*.less'],
-          ignorePath: /(\.\.\/){1,2}bower_components\//
+          src: ['<%%= config.app %>/styles/{,*/}*.less']
         } <%
       } %>
     },
@@ -258,7 +274,7 @@ module.exports = function(grunt) {
       options: {
         dest: '<%%= config.dist %>'
       },
-      html: '<%%= config.app %>/<%%= devFolder %>'
+      html: '<%%= config.app %>/<%= devFile %>'
     },
 
     // Performs rewrites based on rev and the useminPrepare configuration

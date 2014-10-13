@@ -1,7 +1,8 @@
-<% if (includeBootstrap) { %>$icon-font-path: "../bower_components/bootstrap-less/assets/fonts/bootstrap/";
-// bower:scss
-@import "bootstrap-less/assets/stylesheets/bootstrap.less";
+<% if (includeBootstrap) { %>// bower:less
+@import "../bower_components/bootstrap-less/less/bootstrap.less";
 // endbower
+
+@icon-font-path: "/bower_components/bootstrap-less/fonts/";
 
 .browsehappy {
   margin: 0.2em 0;
