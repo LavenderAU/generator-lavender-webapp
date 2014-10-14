@@ -67,8 +67,16 @@
       <p>You now have</p>
       <ul>
       <li>HTML5 Boilerplate</li>
+      <% if (jquery2) { %><li>jQuery 2</li><% } %>
       <% if (includeLess) { %><li>Less</li><% } %>
+      <% if (includeBootstrap) { %><li>Bootstrap</li><% } %>
       <% if (includeModernizr) { %><li>Modernizr</li><% } %>
+      <% if (includeCoreJS) { %><li>Core JS</li><% } %>
+      <% if (includeGreensock) { %><li>Greensock Animation</li><% } %>
+      <% if (includeHtml5shiv) { %><li>HTML5shiv</li><% } %>
+      <% if (includeRaphael) { %><li>RaphaelJS</li><% } %>
+      <% if (includeAccounting) { %><li>AccountingJS</li><% } %>
+      <% if (includeJqueryUI) { %><li>jQuery UI</li><% } %>
       </ul>
     </div>
     <% } %>

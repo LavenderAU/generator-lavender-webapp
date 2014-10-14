@@ -16,13 +16,6 @@ module.exports = yeoman.generators.Base.extend({
     });
     this.testFramework = this.options['test-framework'];
 
-    this.option('coffee', {
-      desc: 'Use CoffeeScript',
-      type: Boolean,
-      defaults: false
-    });
-    this.coffee = this.options.coffee;
-
     this.pkg = require('../package.json');
   },
 
@@ -41,7 +34,7 @@ module.exports = yeoman.generators.Base.extend({
     var prompts = [{
       name: 'projectName',
       message: 'What is the job code for this project?',
-      default: 'ABC123'
+      default: 'ABC1234'
     }, {
       name: 'devFolder',
       message: 'Ok so, where do you want to put the dev source files?',
@@ -116,9 +109,6 @@ module.exports = yeoman.generators.Base.extend({
       this.includeAccounting = hasFeature('includeAccounting');
       this.includeJqueryUI = hasFeature('includeJqueryUI');
 
-      this.includeLibLess = answers.libLess;
-      //this.includeRubyLess = !answers.libLess;
-
       done();
     }.bind(this));
   },
@@ -152,9 +142,7 @@ module.exports = yeoman.generators.Base.extend({
     if (this.includeBootstrap) {
       var bs = 'bootstrap' + (this.includeLess ? '-less' : '');
       bower.dependencies[bs] = "~3.2.0";
-      bower.dependencies[bs].dependencies = [{
-        "respond": "1.4.2"
-      }];
+      bower.dependencies.respond = "1.4.2";
     }
 
     if (this.includeModernizr) {
@@ -183,9 +171,7 @@ module.exports = yeoman.generators.Base.extend({
 
     if (this.includeJqueryUI) {
       bower.dependencies["jquery-ui"] = "~1.11.1";
-      bower.dependencies["jquery-ui"].dependencies = [{
-        "jqueryui-touch-punch": ""
-      }];
+      bower.dependencies["jqueryui-touch-punch"] = "";
     }
 
     //this.copy('bowerrc', '.bowerrc');

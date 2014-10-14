@@ -71,7 +71,7 @@ describe('Lavender webapp generator', function() {
           ['bower.json', /bootstrap/],
           ['Gruntfile.js', /less/],
           ['app/index.html', /Less/],
-          ['.gitignore', /\.sass-cache/],
+          ['.gitignore', /\.tmp/],
           ['package.json', /grunt-contrib-less/],
           ['Gruntfile.js', /bootstrap-less/],
           ['bower.json', /bootstrap-less/]
@@ -105,8 +105,9 @@ describe('Lavender webapp generator', function() {
 
           assert.fileContent([
             ['Gruntfile.js', /bootstrap/],
-            ['app/index.html', /bootstrap/],
-            ['bower.json', /bootstrap/]
+            ['app/index.html', /Bootstrap/],
+            ['bower.json', /bootstrap/],
+            ['bower.json', /respond/]
           ]);
 
           done();
@@ -122,7 +123,7 @@ describe('Lavender webapp generator', function() {
           assert.fileContent([
             ['Gruntfile.js', /less/],
             ['app/index.html', /Less/],
-            ['.gitignore', /\.less-cache/],
+            ['.gitignore', /\.tmp/],
             ['package.json', /grunt-contrib-less/]
           ]);
 
@@ -134,23 +135,64 @@ describe('Lavender webapp generator', function() {
         });
     });
 
-    it('creates expected node LESS files', function(done) {
+    it('creates expected CoreJS components', function(done) {
       runGen.withOptions(options).withPrompt({
-        features: ['includeLess'],
-        libsass: true
-      }).on('end', function() {
+        features: ['includeCoreJS']
+      })
+        .on('end', function() {
 
-        assert.fileContent([
-          ['package.json', /grunt-contrib-less/]
-        ]);
+          assert.fileContent([
+            ['app/index.html', /Core JS/],
+            ['bower.json', /core-js/],
+            ['app/scripts/main.js', /core.wirings.Module/]
+          ]);
 
-        assert.noFileContent([
-          ['package.json', /grunt-contrib-less/],
-          ['Gruntfile.js', /bootstrap-less/]
-        ]);
+          assert.noFileContent([
+            ['app/scripts/main.js', /Allo/]
+          ]);
 
-        done();
-      });
+          done();
+        });
+    });
+
+    it('creates expected 3rd party components', function(done) {
+      runGen.withOptions(options).withPrompt({
+        features: ['includeGreensock', 'html5shiv', 'raphael', 'includeAccounting']
+      })
+        .on('end', function() {
+
+          assert.fileContent([
+            ['app/index.html', /Greensock/],
+            ['bower.json', /greensock/],
+
+            ['app/index.html', /HTML5shiv/],
+            ['bower.json', /html5shiv/],
+
+            ['app/index.html', /Raphael/],
+            ['bower.json', /raphael/],
+
+            ['app/index.html', /Accounting/],
+            ['bower.json', /accountingjs/]
+          ]);
+
+          done();
+        });
+    });
+
+    it('creates expected jQuery UI components', function(done) {
+      runGen.withOptions(options).withPrompt({
+        features: ['includeJqueryUI']
+      })
+        .on('end', function() {
+
+          assert.fileContent([
+            ['app/index.html', /jQuery UI/],
+            ['bower.json', /jquery-ui/],
+            ['bower.json', /jqueryui-touch-punch/]
+          ]);
+
+          done();
+        });
     });
 
     it('creates expected LESS and Bootstrap components', function(done) {
