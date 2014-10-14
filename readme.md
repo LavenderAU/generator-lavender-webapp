@@ -22,6 +22,7 @@ For more information on what `generator-webapp` can do for you, take a look at t
 - Run: `yo lavender-webapp`
 - Run `grunt` for building and `grunt serve` for preview[\*](#grunt-serve-note). `--allow-remote` option for remote access.
 
+`*Note:* If including LESS, make sure python is installed and added to PATH as *Spritesmith* needs it.`
 
 #### Third-Party Dependencies
 
