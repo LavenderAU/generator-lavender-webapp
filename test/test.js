@@ -70,8 +70,8 @@ describe('Lavender webapp generator', function() {
           ['app/index.html', /bootstrap/],
           ['bower.json', /bootstrap/],
           ['Gruntfile.js', /less/],
-          ['app/index.html', /Less/],
           ['.gitignore', /\.tmp/],
+          ['app/index.html', /Less/],
           ['package.json', /grunt-contrib-less/],
           ['Gruntfile.js', /bootstrap-less/],
           ['bower.json', /bootstrap-less/]
@@ -127,10 +127,6 @@ describe('Lavender webapp generator', function() {
             ['package.json', /grunt-contrib-less/]
           ]);
 
-          assert.noFileContent([
-            ['package.json', /grunt-contrib-less/]
-          ]);
-
           done();
         });
     });
@@ -157,7 +153,7 @@ describe('Lavender webapp generator', function() {
 
     it('creates expected 3rd party components', function(done) {
       runGen.withOptions(options).withPrompt({
-        features: ['includeGreensock', 'html5shiv', 'raphael', 'includeAccounting']
+        features: ['includeGreensock', 'includeHtml5shiv', 'includeRaphael', 'includeAccounting']
       })
         .on('end', function() {
 
