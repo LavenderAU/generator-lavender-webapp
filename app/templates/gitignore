@@ -1,6 +1,6 @@
 node_modules
 dist<%
-if (testFramework === 'mocha') { %>
+if (includeLess) { %>
 .tmp
 <% } %>
 bower_components
