@@ -18,7 +18,7 @@ For more information on what `generator-webapp` can do for you, take a look at t
 
 ## Getting Started
 
-- Install: `npm install -g git://github.com/LavenderAU/generator-lavender-webapp`
+- Install: `npm install LavenderAU/generator-lavender-webapp`
 - Run: `yo lavender-webapp`
 - Run `grunt` for building and `grunt serve` for preview[\*](#grunt-serve-note). `--allow-remote` option for remote access.
 
